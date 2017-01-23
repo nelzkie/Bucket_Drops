@@ -9,4 +9,5 @@
     <dimen name="iv_logo_margin">84dp</dimen>
     <dimen name="btn_add_it_vertical_padding">56dp</dimen>
     <dimen name="btn_add_it_text_size">30sp</dimen>
+    <dimen name="actionBarSize">56dp</dimen>
 </resources>

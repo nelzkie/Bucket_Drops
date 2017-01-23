@@ -5,8 +5,20 @@
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         tools:context="com.example.skadush.bucket_drops.ActivityMain">
+    <!--android:background="@drawable/bg"-->
 
-    <include layout="@layout/empty_drops" />
+    <com.facebook.drawee.view.SimpleDraweeView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/frescoImage"
+    />
+
+    <include layout="@layout/toolbar"
+             android:id="@+id/toolBar"
+    />
+
+
+
+    <include layout="@layout/empty_drops"/>
 </RelativeLayout>
