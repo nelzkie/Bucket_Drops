@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import com.example.skadush.bucket_drops.beans.Drop;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmModel;
 
 /**
  * Created by skadush on 24/01/17.
@@ -27,7 +31,7 @@ public class DialogAdd extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_add,container,false);
+        return inflater.inflate(R.layout.dialog_add, container, false);
     }
 
     @Override
@@ -39,15 +43,43 @@ public class DialogAdd extends DialogFragment {
         mInputWhat = (EditText) view.findViewById(R.id.et_drop);
         mBtnAdd = (Button) view.findViewById(R.id.btn_add_it);
 
-        mBntClose.setOnClickListener(mBtnCloseDialogListener);
+        mBntClose.setOnClickListener(mButtonListener);
+        mBtnAdd.setOnClickListener(mButtonListener);
 
 
     }
 
-    View.OnClickListener mBtnCloseDialogListener = new View.OnClickListener() {
+    View.OnClickListener mButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
+
+            switch (v.getId()) {
+                case R.id.btn_add_it:
+                    addAction();
+                    break;
+
+            }
+            dismiss(); // close the dialog
         }
     };
+
+    // TODO add a date
+    private void addAction() {
+        String what = mInputWhat.getText().toString();
+        long currentTime = System.currentTimeMillis();
+
+        Realm.init(getContext());
+        RealmConfiguration configuration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+        Realm.setDefaultConfiguration(configuration);
+        Realm realm = Realm.getDefaultInstance();
+        Drop drop = new Drop(what, currentTime, 0, false);
+
+        realm.beginTransaction();
+        realm.copyToRealm(drop);
+        realm.commitTransaction();
+        realm.close();
+
+    }
+
+
 }
