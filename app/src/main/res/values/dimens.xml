@@ -10,4 +10,6 @@
     <dimen name="btn_add_it_vertical_padding">56dp</dimen>
     <dimen name="btn_add_it_text_size">30sp</dimen>
     <dimen name="actionBarSize">56dp</dimen>
+    <dimen name="tv_title_vertical_margin">36dp</dimen>
+    <dimen name="tv_title_textSize">18sp</dimen>
 </resources>

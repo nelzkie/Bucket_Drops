@@ -68,9 +68,7 @@ public class DialogAdd extends DialogFragment {
         String what = mInputWhat.getText().toString();
         long currentTime = System.currentTimeMillis();
 
-        Realm.init(getContext());
-        RealmConfiguration configuration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
-        Realm.setDefaultConfiguration(configuration);
+
         Realm realm = Realm.getDefaultInstance();
         Drop drop = new Drop(what, currentTime, 0, false);
 

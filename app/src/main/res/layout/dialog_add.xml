@@ -3,4 +3,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="@string/add_a_drop"
+              android:layout_marginTop="@dimen/tv_title_vertical_margin"
+              android:layout_marginBottom="@dimen/tv_title_vertical_margin"
+              android:textSize="@dimen/tv_title_textSize"
+              android:id="@+id/tv_title"
+    />
+    <ImageButton android:layout_width="12dp"
+                 android:layout_height="12dp"
+                 android:src="@drawable/ic_close"
+                 android:layout_alignParentRight="true"
+                 android:layout_alignTop="@id/tv_title"
+                 android:layout_alignBottom="@id/tv_title"
+                 android:background="@null"
+                 android:id="@+id/btnClose"
+              
+
+    />
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:id="@+id/et_drop"
+              android:layout_below="@id/tv_title"
+              android:hint="@string/what_is_it"
+              android:inputType="text"
+              android:maxLines="1"
+              android:minLines="1"
+              android:padding="16dp"
+
+    />
+    <DatePicker android:layout_width="match_parent" android:layout_height="150dp"
+                android:id="@+id/bpv_date"
+                android:layout_below="@id/et_drop"
+
+    />
+
+    <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_below="@id/bpv_date"
+            android:id="@+id/btn_add_it"
+            android:textAllCaps="false"
+            android:text="@string/add_it"
+    />
+
 </RelativeLayout>

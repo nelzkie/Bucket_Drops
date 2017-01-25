@@ -6,4 +6,6 @@
     <color name="light_purple">#B691FF</color>
     <color name="cyan">#05ffca</color>
     <color name="dark_purple">#241543</color>
+    <color name="bg_drop_row_dark">#BD8e79bb</color>
+    <color name="bg_drop_row_light">#4a8e79bb</color>
 </resources>

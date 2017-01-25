@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.skadush.bucket_drops.R;
+import com.example.skadush.bucket_drops.beans.Drop;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 import java.util.ArrayList;
 
@@ -16,10 +19,11 @@ import java.util.ArrayList;
 public class AdapterDrops extends RecyclerView.Adapter<AdapterDrops.DropHolder> {
 
     LayoutInflater mInflater;
-    ArrayList<String>mItems;
-    public AdapterDrops(Context context) {
+    RealmResults<Drop> mResults;
+    public AdapterDrops(Context context,RealmResults<Drop> mResults) {
         mInflater = LayoutInflater.from(context);
-        mItems = generateValues();
+        Update(mResults);
+        //mItems = generateValues();
     }
 
     public static ArrayList<String> generateValues(){
@@ -41,12 +45,13 @@ public class AdapterDrops extends RecyclerView.Adapter<AdapterDrops.DropHolder> 
 
     @Override
     public void onBindViewHolder(DropHolder holder, int position) {
-        holder.mTextWhat.setText(mItems.get(position));
+        Drop drop = mResults.get(position);
+        holder.mTextWhat.setText(drop.getWhat());
     }
 
     @Override
     public int getItemCount() {
-        return 100;
+        return mResults.size();
     }
 
     public static class DropHolder extends RecyclerView.ViewHolder{
@@ -56,5 +61,11 @@ public class AdapterDrops extends RecyclerView.Adapter<AdapterDrops.DropHolder> 
             super(itemView);
             mTextWhat = (TextView) itemView.findViewById(R.id.tv_what);
         }
+    }
+
+    public void Update(RealmResults<Drop> results){
+        mResults = results;
+        notifyDataSetChanged();
+
     }
 }
