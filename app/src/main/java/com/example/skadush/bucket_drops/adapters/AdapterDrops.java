@@ -17,7 +17,8 @@ import java.util.ArrayList;
 /**
  * Created by skadush on 24/01/17.
  */
-public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
+        ISwiperListener {
 
     public static final int ITEM = 0;
     public static final int FOOTER = 1;
@@ -25,19 +26,26 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     RealmResults<Drop> mResults;
 
     IAddListener mAddListener;
-    public AdapterDrops(Context context, RealmResults<Drop> mResults) {
+
+    Realm mRealm;
+
+    public AdapterDrops(Context context, Realm realm, RealmResults<Drop> mResults) {
         mInflater = LayoutInflater.from(context);
+        mRealm = realm;
         Update(mResults);
 
     }
-    public AdapterDrops(Context context, RealmResults<Drop> mResults,IAddListener listener) {
+
+    public AdapterDrops(Context context,Realm realm, RealmResults<Drop> mResults, IAddListener listener) {
         mInflater = LayoutInflater.from(context);
         mAddListener = listener;
+
+        mRealm = realm;
         Update(mResults);
 
     }
 
-    public void setAddListener(IAddListener listener){
+    public void setAddListener(IAddListener listener) {
         mAddListener = listener;
     }
 
@@ -46,7 +54,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == FOOTER) {
             View view = mInflater.inflate(R.layout.footer, parent, false);
-            return new FooterHolder(view,mAddListener);
+            return new FooterHolder(view, mAddListener);
         } else {
             View view = mInflater.inflate(R.layout.row_drop, parent, false);
             return new DropHolder(view);
@@ -57,9 +65,10 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof  DropHolder){
+        if (holder instanceof DropHolder) {
             DropHolder dropHolder = (DropHolder) holder;
             Drop drop = mResults.get(position);
+
             dropHolder.mTextWhat.setText(drop.getWhat());
         }
 
@@ -67,7 +76,22 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mResults.size() + 1;
+        if(mResults == null || mResults.isEmpty()){
+            return 0;
+        }else{
+            return mResults.size() + 1;
+        }
+
+    }
+
+    @Override
+    public void onSwipe(int position) {
+        if(position < mResults.size()){
+            mRealm.beginTransaction();
+            mResults.get(position).deleteFromRealm();
+            mRealm.commitTransaction();
+            notifyItemRemoved(position);
+        }
     }
 
     public static class DropHolder extends RecyclerView.ViewHolder {
@@ -79,15 +103,18 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mTextWhat = (TextView) itemView.findViewById(R.id.tv_what);
         }
     }
+
     public static class FooterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         Button mBtnAdd;
         IAddListener listener;
+
         public FooterHolder(View itemView) {
             super(itemView);
             mBtnAdd = (Button) itemView.findViewById(R.id.btn_footer);
             mBtnAdd.setOnClickListener(this);
         }
+
         public FooterHolder(View itemView, IAddListener listener) {
             super(itemView);
             this.listener = listener;
