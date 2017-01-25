@@ -6,7 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
+import com.example.skadush.bucket_drops.extras.Util;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,38 +18,66 @@ import java.util.List;
  */
 public class BucketRecyclerView extends RecyclerView {
 
-    List<View> mNonEmptyViews, mEmptyViews;
+    List<View> mNonEmptyViews = Collections.emptyList();
+    List<View>mEmptyViews = Collections.emptyList();
     AdapterDataObserver mObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
-
+            toggletViews();
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount) {
-
+            toggletViews();
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-
+            toggletViews();
         }
 
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
-
+            toggletViews();
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-
+            toggletViews();
         }
 
         @Override
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-
+            toggletViews();
         }
     };
+
+    private void toggletViews() {
+        if(getAdapter() != null && !mEmptyViews.isEmpty() && !mNonEmptyViews.isEmpty()){
+            if(getAdapter().getItemCount() == 0){
+
+                // show all the empty views
+                Util.showViews(mEmptyViews);
+
+                // hide the recycler view
+                setVisibility(View.GONE);
+
+                // hide all the views which are  meant to be hidden
+                Util.hideViews(mNonEmptyViews);
+
+            }else{
+
+                //hide all the empty views
+                Util.showViews(mNonEmptyViews);
+                // show the recycler
+                setVisibility(View.VISIBLE);
+
+                // hide all the views which are  meant to be hidden
+                Util.hideViews(mEmptyViews);
+            }
+        }
+    }
+
     public BucketRecyclerView(Context context) {
         super(context);
     }
@@ -70,10 +102,12 @@ public class BucketRecyclerView extends RecyclerView {
     }
 
     public void hideIfEmpty(View ...views) {
+        mNonEmptyViews = Arrays.asList(views);
 
     }
 
     public void showIfEmpty(View ...emptyViews) {
+        mEmptyViews = Arrays.asList(emptyViews) ;
 
     }
 }
