@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import com.example.skadush.bucket_drops.adapters.AdapterDrops;
 import com.example.skadush.bucket_drops.beans.Drop;
+import com.example.skadush.bucket_drops.widgets.BucketRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -20,10 +21,12 @@ public class ActivityMain extends AppCompatActivity {
 
     Toolbar mToolbar;
     SimpleDraweeView simpleDraweeView;
-    RecyclerView mRecyclerView;
+    BucketRecyclerView mRecyclerView;
     RealmResults<Drop> mRealmResult;
     AdapterDrops mAdapter;
     Realm mRealm;
+
+    View emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +37,15 @@ public class ActivityMain extends AppCompatActivity {
         mRealmResult = mRealm.where(Drop.class).findAllAsync();
 
         mToolbar = (Toolbar) findViewById(R.id.toolBar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_drops);
+        mRecyclerView = (BucketRecyclerView) findViewById(R.id.rv_drops);
         mAdapter =new AdapterDrops(this,mRealmResult);
         mRecyclerView.setAdapter(mAdapter);
+
+        emptyView = findViewById(R.id.empty_drops);
+
+        mRecyclerView.hideIfEmpty(mToolbar);
+        mRecyclerView.showIfEmpty(emptyView);
+
 //        LinearLayoutManager manager = new LinearLayoutManager(this);
 //        mRecyclerView.setLayoutManager(manager);
         setSupportActionBar(mToolbar);

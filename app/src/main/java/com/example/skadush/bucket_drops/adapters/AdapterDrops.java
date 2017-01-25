@@ -23,16 +23,9 @@ public class AdapterDrops extends RecyclerView.Adapter<AdapterDrops.DropHolder> 
     public AdapterDrops(Context context,RealmResults<Drop> mResults) {
         mInflater = LayoutInflater.from(context);
         Update(mResults);
-        //mItems = generateValues();
+
     }
 
-    public static ArrayList<String> generateValues(){
-        ArrayList<String> dummyValues = new ArrayList<>();
-        for (int i = 0; i < 101; i++) {
-            dummyValues.add("Item "+ i);
-        }
-        return dummyValues;
-    }
 
 
     @Override
@@ -65,7 +58,7 @@ public class AdapterDrops extends RecyclerView.Adapter<AdapterDrops.DropHolder> 
 
     public void Update(RealmResults<Drop> results){
         mResults = results;
-        notifyDataSetChanged();
+        notifyDataSetChanged(); // will refresh the adapter
 
     }
 }
