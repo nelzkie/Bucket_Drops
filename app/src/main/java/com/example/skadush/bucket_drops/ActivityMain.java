@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import com.example.skadush.bucket_drops.adapters.AdapterDrops;
 import com.example.skadush.bucket_drops.adapters.Divider;
+import com.example.skadush.bucket_drops.adapters.IAddListener;
 import com.example.skadush.bucket_drops.beans.Drop;
 import com.example.skadush.bucket_drops.widgets.BucketRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -18,7 +19,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class ActivityMain extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity implements IAddListener {
 
     Toolbar mToolbar;
     SimpleDraweeView simpleDraweeView;
@@ -28,6 +29,7 @@ public class ActivityMain extends AppCompatActivity {
     Realm mRealm;
 
     View emptyView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class ActivityMain extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolBar);
         mRecyclerView = (BucketRecyclerView) findViewById(R.id.rv_drops);
         mRecyclerView.addItemDecoration(new Divider(this,LinearLayoutManager.VERTICAL));
-        mAdapter =new AdapterDrops(this,mRealmResult);
+        mAdapter =new AdapterDrops(this,mRealmResult,this);
         mRecyclerView.setAdapter(mAdapter);
 
         emptyView = findViewById(R.id.empty_drops);
@@ -86,4 +88,9 @@ public class ActivityMain extends AppCompatActivity {
             mAdapter.Update(mRealmResult);
         }
     };
+
+    @Override
+    public void Add() {
+        showDialogAdd();
+    }
 }

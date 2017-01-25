@@ -24,10 +24,21 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     LayoutInflater mInflater;
     RealmResults<Drop> mResults;
 
+    IAddListener mAddListener;
     public AdapterDrops(Context context, RealmResults<Drop> mResults) {
         mInflater = LayoutInflater.from(context);
         Update(mResults);
 
+    }
+    public AdapterDrops(Context context, RealmResults<Drop> mResults,IAddListener listener) {
+        mInflater = LayoutInflater.from(context);
+        mAddListener = listener;
+        Update(mResults);
+
+    }
+
+    public void setAddListener(IAddListener listener){
+        mAddListener = listener;
     }
 
 
@@ -35,7 +46,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == FOOTER) {
             View view = mInflater.inflate(R.layout.footer, parent, false);
-            return new FooterHolder(view);
+            return new FooterHolder(view,mAddListener);
         } else {
             View view = mInflater.inflate(R.layout.row_drop, parent, false);
             return new DropHolder(view);
@@ -68,13 +79,27 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mTextWhat = (TextView) itemView.findViewById(R.id.tv_what);
         }
     }
-    public static class FooterHolder extends RecyclerView.ViewHolder {
+    public static class FooterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         Button mBtnAdd;
-
+        IAddListener listener;
         public FooterHolder(View itemView) {
             super(itemView);
             mBtnAdd = (Button) itemView.findViewById(R.id.btn_footer);
+            mBtnAdd.setOnClickListener(this);
+        }
+        public FooterHolder(View itemView, IAddListener listener) {
+            super(itemView);
+            this.listener = listener;
+
+            mBtnAdd = (Button) itemView.findViewById(R.id.btn_footer);
+            mBtnAdd.setOnClickListener(this);
+        }
+
+
+        @Override
+        public void onClick(View v) {
+            listener.Add();
         }
     }
 
