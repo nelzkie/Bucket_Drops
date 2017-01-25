@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import com.example.skadush.bucket_drops.adapters.AdapterDrops;
+import com.example.skadush.bucket_drops.adapters.Divider;
 import com.example.skadush.bucket_drops.beans.Drop;
 import com.example.skadush.bucket_drops.widgets.BucketRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -38,6 +39,7 @@ public class ActivityMain extends AppCompatActivity {
 
         mToolbar = (Toolbar) findViewById(R.id.toolBar);
         mRecyclerView = (BucketRecyclerView) findViewById(R.id.rv_drops);
+        mRecyclerView.addItemDecoration(new Divider(this,LinearLayoutManager.VERTICAL));
         mAdapter =new AdapterDrops(this,mRealmResult);
         mRecyclerView.setAdapter(mAdapter);
 
