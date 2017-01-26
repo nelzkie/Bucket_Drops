@@ -1,5 +1,6 @@
 package com.example.skadush.bucket_drops;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +25,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class ActivityMain extends AppCompatActivity implements IAddListener,IMarkListener,ICompleteListener {
+public class ActivityMain extends AppCompatActivity implements IAddListener, IMarkListener, ICompleteListener {
 
     Toolbar mToolbar;
     SimpleDraweeView simpleDraweeView;
@@ -44,20 +45,23 @@ public class ActivityMain extends AppCompatActivity implements IAddListener,IMar
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mRealm = Realm.getDefaultInstance();
-        mRealmResult = mRealm.where(Drop.class).findAllAsync();
+        int filterOption = load();
+        loadResults(filterOption);
+
+
+
 
         mToolbar = (Toolbar) findViewById(R.id.toolBar);
         //mToolbar.setOverflowIcon(ContextCompat.getDrawable(this,R.drawable.ic_action_add));
         mRecyclerView = (BucketRecyclerView) findViewById(R.id.rv_drops);
-        mRecyclerView.addItemDecoration(new Divider(this,LinearLayoutManager.VERTICAL));
-        mAdapter =new AdapterDrops(this,mRealm, mRealmResult,this,this);
+        mRecyclerView.addItemDecoration(new Divider(this, LinearLayoutManager.VERTICAL));
+        mAdapter = new AdapterDrops(this, mRealm, mRealmResult, this, this);
         mRecyclerView.setAdapter(mAdapter);
 
         emptyView = findViewById(R.id.empty_drops);
@@ -79,37 +83,51 @@ public class ActivityMain extends AppCompatActivity implements IAddListener,IMar
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
-        return  true;
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        int filterOption = Filter.NONE;
+        boolean handle = true;
+        switch (item.getItemId()) {
             case R.id.action_add:
+                filterOption = Filter.NONE;
                 showDialogAdd();
                 break;
             case R.id.action_sort_descending_date:
-                mRealmResult = mRealm.where(Drop.class).findAllSortedAsync("when", Sort.DESCENDING);
-                mRealmResult.addChangeListener(realmChangeListener);
 
+                filterOption = Filter.MOST_TIME_LEFT;
+                save(Filter.MOST_TIME_LEFT);
 
                 break;
             case R.id.action_sort_ascending_date:
-                mRealmResult = mRealm.where(Drop.class).findAllSortedAsync("when");
-                mRealmResult.addChangeListener(realmChangeListener);
+
+                filterOption = Filter.LEAST_TIME_LEFT;
+                save(Filter.LEAST_TIME_LEFT);
+
                 break;
             case R.id.action_show_complete:
-                mRealmResult = mRealm.where(Drop.class).equalTo("completed",true).findAllAsync();
-                mRealmResult.addChangeListener(realmChangeListener);
+                filterOption = Filter.COMPETE;
+
+                save(Filter.COMPETE);
+
                 break;
             case R.id.action_show_incomplete:
-                mRealmResult = mRealm.where(Drop.class).equalTo("completed",false).findAllAsync();
-                mRealmResult.addChangeListener(realmChangeListener);
+                filterOption = Filter.INCOMPLETE;
+
+                save(Filter.INCOMPLETE);
+
+
+                break;
+            default:
+                handle = false;
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        loadResults(filterOption);
+        return handle;
     }
 
     private void initSwipe() {
@@ -141,11 +159,12 @@ public class ActivityMain extends AppCompatActivity implements IAddListener,IMar
         DialogAdd dialogAdd = new DialogAdd();
         dialogAdd.show(getSupportFragmentManager(), "Add");
     }
+
     private void showDialogMark(int position) {
         DialogMark dialogMark = new DialogMark();
 
         Bundle bundle = new Bundle();
-        bundle.putInt("POSITION",position);
+        bundle.putInt("POSITION", position);
         dialogMark.setArguments(bundle);
         dialogMark.setCompleteListener(this);
         dialogMark.show(getSupportFragmentManager(), "Mark");
@@ -165,6 +184,41 @@ public class ActivityMain extends AppCompatActivity implements IAddListener,IMar
     @Override
     public void onComplete(int position) {
         mAdapter.markComplete(position);
+    }
+
+    void save(int filterOption) {
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("filter", filterOption);
+        editor.apply(); // apply() is async while commit() is sync
+    }
+
+    int load() {
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        int filterOption = pref.getInt("filter", Filter.NONE);
+        return filterOption;
+    }
+
+    void loadResults(int filter) {
+        switch (filter) {
+            case Filter.NONE:
+                mRealmResult = mRealm.where(Drop.class).findAllAsync();
+                break;
+            case Filter.LEAST_TIME_LEFT:
+                mRealmResult = mRealm.where(Drop.class).findAllSortedAsync("when");
+                break;
+            case Filter.MOST_TIME_LEFT:
+
+                mRealmResult = mRealm.where(Drop.class).findAllSortedAsync("when", Sort.DESCENDING);
+                break;
+            case Filter.COMPETE:
+                mRealmResult = mRealm.where(Drop.class).equalTo("completed", true).findAllAsync();
+                break;
+            case Filter.INCOMPLETE:
+                mRealmResult = mRealm.where(Drop.class).equalTo("completed", false).findAllAsync();
+                break;
+        }
+        mRealmResult.addChangeListener(realmChangeListener);
     }
 
 
