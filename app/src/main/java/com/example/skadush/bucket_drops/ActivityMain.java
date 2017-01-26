@@ -55,7 +55,7 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
         int filterOption = MyApplication.load(this);
         loadResults(filterOption);
 
-        
+
 
 
 

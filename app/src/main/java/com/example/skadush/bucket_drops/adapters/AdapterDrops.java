@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.example.skadush.bucket_drops.MyApplication;
 import com.example.skadush.bucket_drops.R;
 import com.example.skadush.bucket_drops.beans.Drop;
@@ -208,6 +209,18 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public NoItemsHolder(View itemView) {
             super(itemView);
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+
+        if(position < mResults.size()){
+            Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
+            return  mResults.get(position).getAdded();
+
+        }
+
+        return RecyclerView.NO_ID;
     }
 
     @Override

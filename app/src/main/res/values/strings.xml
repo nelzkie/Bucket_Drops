@@ -3,4 +3,5 @@
     <string name="add_a_drop">Add a Drop</string>
     <string name="what_is_it">What is it?</string>
     <string name="add_it">Add It</string>
+    <string name="no_item">No Item to display</string>
 </resources>
