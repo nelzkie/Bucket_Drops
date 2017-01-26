@@ -1,7 +1,11 @@
 package com.example.skadush.bucket_drops.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.example.skadush.bucket_drops.R;
 import com.example.skadush.bucket_drops.beans.Drop;
+import com.example.skadush.bucket_drops.extras.Util;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -26,7 +31,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     RealmResults<Drop> mResults;
 
     IAddListener mAddListener;
-
+    IMarkListener markListener;
     Realm mRealm;
 
     public AdapterDrops(Context context, Realm realm, RealmResults<Drop> mResults) {
@@ -36,11 +41,13 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    public AdapterDrops(Context context,Realm realm, RealmResults<Drop> mResults, IAddListener listener) {
+    public AdapterDrops(Context context, Realm realm, RealmResults<Drop> mResults, IAddListener listener,
+                        IMarkListener markListener) {
         mInflater = LayoutInflater.from(context);
         mAddListener = listener;
 
         mRealm = realm;
+        this.markListener = markListener;
         Update(mResults);
 
     }
@@ -57,7 +64,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return new FooterHolder(view, mAddListener);
         } else {
             View view = mInflater.inflate(R.layout.row_drop, parent, false);
-            return new DropHolder(view);
+            return new DropHolder(view, markListener);
         }
 
 
@@ -69,16 +76,18 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             DropHolder dropHolder = (DropHolder) holder;
             Drop drop = mResults.get(position);
 
-            dropHolder.mTextWhat.setText(drop.getWhat());
+            dropHolder.setWhat(drop.getWhat());
+            dropHolder.setWhen(drop.getWhen());
+            dropHolder.setBackground(drop.isCompleted());
         }
 
     }
 
     @Override
     public int getItemCount() {
-        if(mResults == null || mResults.isEmpty()){
+        if (mResults == null || mResults.isEmpty()) {
             return 0;
-        }else{
+        } else {
             return mResults.size() + 1;
         }
 
@@ -86,7 +95,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onSwipe(int position) {
-        if(position < mResults.size()){
+        if (position < mResults.size()) {
             mRealm.beginTransaction();
             mResults.get(position).deleteFromRealm();
             mRealm.commitTransaction();
@@ -94,13 +103,57 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public static class DropHolder extends RecyclerView.ViewHolder {
+    public void markComplete(int position) {
+        if (position < mResults.size()) {
+            mRealm.beginTransaction();
+            mResults.get(position).setCompleted(true);
+            mRealm.commitTransaction();
+            notifyItemChanged(position);
+        }
 
-        TextView mTextWhat;
+    }
 
-        public DropHolder(View itemView) {
+    public static class DropHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        TextView mTextWhat,mTextWhen;
+        IMarkListener markListener;
+
+        Context context;
+        View mItemView;
+
+        public DropHolder(View itemView, IMarkListener markListener) {
             super(itemView);
+            context = itemView.getContext();
+            mItemView = itemView;
+            itemView.setOnClickListener(this);
             mTextWhat = (TextView) itemView.findViewById(R.id.tv_what);
+            mTextWhen = (TextView) itemView.findViewById(R.id.tv_When);
+            this.markListener = markListener;
+        }
+
+        public void setWhat(String what) {
+            mTextWhat.setText(what);
+        }
+
+        @Override
+        public void onClick(View v) {
+            markListener.onMark(getAdapterPosition());
+        }
+
+        public void setBackground(boolean completed) {
+            Drawable drawable;
+            if (completed) {
+                drawable = ContextCompat.getDrawable(context, R.color.bg_drop_row_dark);
+            } else {
+                drawable = ContextCompat.getDrawable(context, R.drawable.bg_row_drop);
+            }
+
+            Util.setBackground(mItemView,drawable);
+
+        }
+
+        public void setWhen(long when) {
+            mTextWhen.setText(DateUtils.getRelativeTimeSpanString(when,System.currentTimeMillis(),DateUtils.MINUTE_IN_MILLIS,DateUtils.FORMAT_ABBREV_ALL));
         }
     }
 

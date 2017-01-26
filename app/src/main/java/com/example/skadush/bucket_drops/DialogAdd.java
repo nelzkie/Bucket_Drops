@@ -15,6 +15,8 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmModel;
 
+import java.util.Calendar;
+
 /**
  * Created by skadush on 24/01/17.
  */
@@ -22,8 +24,9 @@ public class DialogAdd extends DialogFragment {
 
     ImageButton mBntClose;
     EditText mInputWhat;
-    DatePicker mInputPicker;
+    DatePicker mInputWhen;
     Button mBtnAdd;
+
 
     public DialogAdd() {
     }
@@ -39,9 +42,10 @@ public class DialogAdd extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mBntClose = (ImageButton) view.findViewById(R.id.btnClose);
-        mInputPicker = (DatePicker) view.findViewById(R.id.bpv_date);
+        mInputWhen = (DatePicker) view.findViewById(R.id.bpv_date);
         mInputWhat = (EditText) view.findViewById(R.id.et_drop);
         mBtnAdd = (Button) view.findViewById(R.id.btn_add_it);
+
 
         mBntClose.setOnClickListener(mButtonListener);
         mBtnAdd.setOnClickListener(mButtonListener);
@@ -67,10 +71,20 @@ public class DialogAdd extends DialogFragment {
     private void addAction() {
         String what = mInputWhat.getText().toString();
         long currentTime = System.currentTimeMillis();
+        String date = mInputWhen.getDayOfMonth() + "/ " + mInputWhen.getMonth() + " /" + mInputWhen.getYear();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH,mInputWhen.getDayOfMonth());
+        calendar.set(Calendar.MONTH,mInputWhen.getMonth());
+        calendar.set(Calendar.YEAR,mInputWhen.getYear());
+        calendar.set(Calendar.HOUR,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
 
+
+        long now = System.currentTimeMillis();
 
         Realm realm = Realm.getDefaultInstance();
-        Drop drop = new Drop(what, currentTime, 0, false);
+        Drop drop = new Drop(what, currentTime, calendar.getTimeInMillis(), false);
 
         realm.beginTransaction();
         realm.copyToRealm(drop);

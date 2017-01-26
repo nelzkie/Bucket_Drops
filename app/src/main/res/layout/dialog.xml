@@ -10,20 +10,19 @@
                  android:scaleType="fitCenter"
                  android:background="@null"
                  android:src="@drawable/ic_close"
-                 android:layout_above="@id/btn_completed"
-
+                 android:layout_above="@+id/btn_mark_completed"
+                 android:id="@+id/btn_mark_close"
                  android:layout_alignParentRight="true"
     />
     <Button android:layout_width="match_parent" android:layout_height="wrap_content"
             android:background="@null"
-            android:id="@+id/btn_completed"
+            android:id="@+id/btn_mark_completed"
             android:text="Mark Completed"
             android:layout_centerInParent="true"
             android:textAllCaps="false"
             android:drawableTop="@drawable/ic_check"
             android:drawablePadding="16dp"
             android:textSize="24sp"
-            android:layout_marginTop="96dp"
-            android:layout_marginBottom="96dp"
+
     />
 </RelativeLayout>
