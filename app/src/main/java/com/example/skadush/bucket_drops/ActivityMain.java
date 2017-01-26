@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -51,17 +52,20 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
         setContentView(R.layout.activity_main);
 
         mRealm = Realm.getDefaultInstance();
-        int filterOption = load();
+        int filterOption = MyApplication.load(this);
         loadResults(filterOption);
 
 
 
 
         mToolbar = (Toolbar) findViewById(R.id.toolBar);
-        //mToolbar.setOverflowIcon(ContextCompat.getDrawable(this,R.drawable.ic_action_add));
+
         mRecyclerView = (BucketRecyclerView) findViewById(R.id.rv_drops);
         mRecyclerView.addItemDecoration(new Divider(this, LinearLayoutManager.VERTICAL));
+       mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         mAdapter = new AdapterDrops(this, mRealm, mRealmResult, this, this);
+        mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
         emptyView = findViewById(R.id.empty_drops);
@@ -94,38 +98,45 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
         boolean handle = true;
         switch (item.getItemId()) {
             case R.id.action_add:
-                filterOption = Filter.NONE;
+
                 showDialogAdd();
                 break;
+            case R.id.action_sort_none:
+                filterOption = Filter.NONE;
+                break;
+
             case R.id.action_sort_descending_date:
 
                 filterOption = Filter.MOST_TIME_LEFT;
-                save(Filter.MOST_TIME_LEFT);
+
 
                 break;
             case R.id.action_sort_ascending_date:
 
                 filterOption = Filter.LEAST_TIME_LEFT;
-                save(Filter.LEAST_TIME_LEFT);
+
 
                 break;
             case R.id.action_show_complete:
                 filterOption = Filter.COMPETE;
 
-                save(Filter.COMPETE);
+
 
                 break;
             case R.id.action_show_incomplete:
                 filterOption = Filter.INCOMPLETE;
 
-                save(Filter.INCOMPLETE);
+
 
 
                 break;
             default:
+
                 handle = false;
                 break;
         }
+        MyApplication.save(this,filterOption);
+
         loadResults(filterOption);
         return handle;
     }
@@ -186,18 +197,6 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
         mAdapter.markComplete(position);
     }
 
-    void save(int filterOption) {
-        SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("filter", filterOption);
-        editor.apply(); // apply() is async while commit() is sync
-    }
-
-    int load() {
-        SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        int filterOption = pref.getInt("filter", Filter.NONE);
-        return filterOption;
-    }
 
     void loadResults(int filter) {
         switch (filter) {
