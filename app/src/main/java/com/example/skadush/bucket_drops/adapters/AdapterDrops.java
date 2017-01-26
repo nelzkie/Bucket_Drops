@@ -34,6 +34,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static final int NO_ITEM = 2;
     public static final int COUNT_FOOTER = 1;
     public static final int COUNT_NO_ITEMS = 1;
+    private  IResetListener resetListener;
 
     LayoutInflater mInflater;
     RealmResults<Drop> mResults;
@@ -54,13 +55,14 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public AdapterDrops(Context context, Realm realm, RealmResults<Drop> mResults, IAddListener listener,
-                        IMarkListener markListener) {
+                        IMarkListener markListener,IResetListener resetListener) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
         mAddListener = listener;
 
         mRealm = realm;
         this.markListener = markListener;
+        this.resetListener = resetListener;
         Update(mResults);
 
 
@@ -122,6 +124,13 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mRealm.commitTransaction();
             notifyItemRemoved(position);
         }
+        resetFilterIfEmpty();
+    }
+
+    private void resetFilterIfEmpty() {
+            if(mResults.isEmpty() && mFilterOption == Filter.COMPETE || mFilterOption == Filter.INCOMPLETE){
+                resetListener.onReset();
+            }
     }
 
     public void markComplete(int position) {

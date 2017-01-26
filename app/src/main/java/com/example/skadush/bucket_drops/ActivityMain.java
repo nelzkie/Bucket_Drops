@@ -26,7 +26,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class ActivityMain extends AppCompatActivity implements IAddListener, IMarkListener, ICompleteListener {
+public class ActivityMain extends AppCompatActivity implements IAddListener, IMarkListener, ICompleteListener,IResetListener {
 
     Toolbar mToolbar;
     SimpleDraweeView simpleDraweeView;
@@ -65,7 +65,7 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
         mRecyclerView.addItemDecoration(new Divider(this, LinearLayoutManager.VERTICAL));
        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new AdapterDrops(this, mRealm, mRealmResult, this, this);
+        mAdapter = new AdapterDrops(this, mRealm, mRealmResult, this, this,this);
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -222,4 +222,9 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
     }
 
 
+    @Override
+    public void onReset() {
+        MyApplication.save(this,Filter.NONE);
+        loadResults(Filter.NONE);
+    }
 }
