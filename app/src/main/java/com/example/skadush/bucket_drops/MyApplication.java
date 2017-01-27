@@ -3,9 +3,15 @@ package com.example.skadush.bucket_drops;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.widget.TextView;
+
 import com.example.skadush.bucket_drops.adapters.Filter;
 import com.facebook.drawee.backends.pipeline.Fresco;
+
+import org.w3c.dom.Text;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -37,4 +43,13 @@ public class MyApplication extends Application {
         int filterOption = pref.getInt("filter", Filter.NONE);
         return filterOption;
     }
+
+   public static void setCustomFont(Context context,String path, TextView... textViews){
+       Typeface typeface = Typeface.createFromAsset(context.getAssets(),path);
+
+       for(TextView t : textViews){
+           t.setTypeface(typeface);
+       }
+
+   }
 }

@@ -1,6 +1,8 @@
 package com.example.skadush.bucket_drops.adapters;
 
+import android.app.Application;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Debug;
@@ -14,10 +16,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.skadush.bucket_drops.MyApplication;
 import com.example.skadush.bucket_drops.R;
 import com.example.skadush.bucket_drops.beans.Drop;
 import com.example.skadush.bucket_drops.extras.Util;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -34,7 +38,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static final int NO_ITEM = 2;
     public static final int COUNT_FOOTER = 1;
     public static final int COUNT_NO_ITEMS = 1;
-    private  IResetListener resetListener;
+    private IResetListener resetListener;
 
     LayoutInflater mInflater;
     RealmResults<Drop> mResults;
@@ -55,7 +59,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public AdapterDrops(Context context, Realm realm, RealmResults<Drop> mResults, IAddListener listener,
-                        IMarkListener markListener,IResetListener resetListener) {
+                        IMarkListener markListener, IResetListener resetListener) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
         mAddListener = listener;
@@ -128,9 +132,9 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void resetFilterIfEmpty() {
-            if(mResults.isEmpty() && mFilterOption == Filter.COMPETE || mFilterOption == Filter.INCOMPLETE){
-                resetListener.onReset();
-            }
+        if (mResults.isEmpty() && mFilterOption == Filter.COMPETE || mFilterOption == Filter.INCOMPLETE) {
+            resetListener.onReset();
+        }
     }
 
     public void markComplete(int position) {
@@ -159,6 +163,11 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mTextWhat = (TextView) itemView.findViewById(R.id.tv_what);
             mTextWhen = (TextView) itemView.findViewById(R.id.tv_When);
             this.markListener = markListener;
+
+            Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/raleway_thin.ttf");
+            mTextWhat.setTypeface(typeface);
+            mTextWhen.setTypeface(typeface);
+
         }
 
         public void setWhat(String what) {
@@ -223,9 +232,9 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public long getItemId(int position) {
 
-        if(position < mResults.size()){
+        if (position < mResults.size()) {
             Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
-            return  mResults.get(position).getAdded();
+            return mResults.get(position).getAdded();
 
         }
 
@@ -235,7 +244,7 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
 
-        Log.d("item","" + ITEM);
+        Log.d("item", "" + ITEM);
 
         if (!mResults.isEmpty()) {
             if (position < mResults.size()) {
@@ -243,14 +252,14 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else {
                 return FOOTER;
             }
-        }else{
-            if(mFilterOption == Filter.COMPETE || mFilterOption == Filter.INCOMPLETE){
-                if(position == 0){
-                    return  NO_ITEM;
-                }else{
-                    return  FOOTER;
+        } else {
+            if (mFilterOption == Filter.COMPETE || mFilterOption == Filter.INCOMPLETE) {
+                if (position == 0) {
+                    return NO_ITEM;
+                } else {
+                    return FOOTER;
                 }
-            }else{
+            } else {
                 return ITEM;
             }
         }
