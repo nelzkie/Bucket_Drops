@@ -3,6 +3,8 @@ package com.example.skadush.bucket_drops.widgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,6 +30,31 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
     public static final int TOP = 1;
     public static final int RIGHT = 2;
     public static final int BOTTOM = 3;
+    private int MSG_KEY =1;
+    private long DELAY = 250;
+    boolean mIncrement, mDecrement;
+    int mActiveTextViewID;
+
+    Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if(mIncrement){
+                increment(mActiveTextViewID);
+            }
+
+            if(mDecrement){
+                decrement(mActiveTextViewID);
+            }
+
+            if(mIncrement || mDecrement){
+                mHandler.sendEmptyMessageDelayed(MSG_KEY,DELAY);
+            }
+
+            return true;
+        }
+    });
+
+
 
     public BucketPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -117,18 +144,32 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
             Rect bottomBounds = drawables[BOTTOM].getBounds();
             float x = event.getX();
             float y = event.getY();
+            mActiveTextViewID = textView.getId();
             if (topDrawableHit(textView,topBounds.height(),x,y)) {
 
                 if(isActionDown(event)){
 
+                    mIncrement = true;
                     increment(textView.getId());
+                    mHandler.removeMessages(MSG_KEY);
+                    mHandler.sendEmptyMessageDelayed(MSG_KEY,DELAY);
+                }
+                if(isActionUpOrCancel(event)){
+                    mIncrement = false;
                 }
             } else if (bottomDrawableHit(textView,bottomBounds.height(),x,y)) {
                 if(isActionDown(event)){
+                    mDecrement = true;
                     decrement(textView.getId());
+                    mHandler.removeMessages(MSG_KEY);
+                    mHandler.sendEmptyMessageDelayed(MSG_KEY,DELAY);
+                }
+                if(isActionUpOrCancel(event)){
+                    mDecrement = false;
                 }
             } else {
-
+                mDecrement = false;
+                mIncrement = false;
             }
 
 
@@ -137,6 +178,9 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
 
     boolean isActionDown(MotionEvent event){
         return  event.getAction() == MotionEvent.ACTION_DOWN;
+    }
+    boolean isActionUpOrCancel(MotionEvent event){
+        return  event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL ;
     }
 
     void increment(int id){
