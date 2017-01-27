@@ -1,5 +1,8 @@
 package com.example.skadush.bucket_drops;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import com.example.skadush.bucket_drops.adapters.*;
 import com.example.skadush.bucket_drops.beans.Drop;
+import com.example.skadush.bucket_drops.service.NotificationService;
 import com.example.skadush.bucket_drops.widgets.BucketRecyclerView;
 import com.example.skadush.bucket_drops.widgets.DialogMark;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -26,7 +30,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class ActivityMain extends AppCompatActivity implements IAddListener, IMarkListener, ICompleteListener,IResetListener {
+public class ActivityMain extends AppCompatActivity implements IAddListener, IMarkListener, ICompleteListener, IResetListener {
 
     Toolbar mToolbar;
     SimpleDraweeView simpleDraweeView;
@@ -56,16 +60,13 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
         loadResults(filterOption);
 
 
-
-
-
         mToolbar = (Toolbar) findViewById(R.id.toolBar);
 
         mRecyclerView = (BucketRecyclerView) findViewById(R.id.rv_drops);
         mRecyclerView.addItemDecoration(new Divider(this, LinearLayoutManager.VERTICAL));
-       mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new AdapterDrops(this, mRealm, mRealmResult, this, this,this);
+        mAdapter = new AdapterDrops(this, mRealm, mRealmResult, this, this, this);
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -82,6 +83,11 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
 
 
         initBackgroundImageUsingFresco();
+
+        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(this, NotificationService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 1000, 5000, pendingIntent);
 
 
     }
@@ -122,12 +128,9 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
                 filterOption = Filter.COMPETE;
 
 
-
                 break;
             case R.id.action_show_incomplete:
                 filterOption = Filter.INCOMPLETE;
-
-
 
 
                 break;
@@ -136,7 +139,7 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
                 handle = false;
                 break;
         }
-        MyApplication.save(this,filterOption);
+        MyApplication.save(this, filterOption);
 
         loadResults(filterOption);
         return handle;
@@ -224,7 +227,7 @@ public class ActivityMain extends AppCompatActivity implements IAddListener, IMa
 
     @Override
     public void onReset() {
-        MyApplication.save(this,Filter.NONE);
+        MyApplication.save(this, Filter.NONE);
         loadResults(Filter.NONE);
     }
 }
