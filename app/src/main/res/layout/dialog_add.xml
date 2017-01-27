@@ -32,9 +32,10 @@
               android:padding="16dp"
 
     />
-    <DatePicker android:layout_width="match_parent" android:layout_height="150dp"
-                android:id="@+id/bpv_date"
-                android:layout_below="@id/et_drop"
+    <com.example.skadush.bucket_drops.widgets.BucketPickerView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:id="@+id/bpv_date"
+            android:layout_below="@id/et_drop"
 
     />
 

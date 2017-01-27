@@ -5,14 +5,14 @@
               android:layout_height="wrap_content"
               android:gravity="center">
 
-
+    <Space android:layout_width="24dp" android:layout_height="match_parent"/>
     <TextView
             android:text="JAN"
             android:id="@+id/tv_month"
 
             style="@style/DatePickerItemStyle"/>
 
-    <Space android:layout_width="32dp" android:layout_height="match_parent"/>
+    <Space android:layout_width="24dp" android:layout_height="match_parent"/>
 
     <TextView
             android:text="10"
@@ -21,7 +21,7 @@
             style="@style/DatePickerItemStyle"
     />
 
-    <Space android:layout_width="32dp" android:layout_height="match_parent"/>
+    <Space android:layout_width="24dp" android:layout_height="match_parent"/>
 
     <TextView
             android:text="2017"
@@ -29,4 +29,5 @@
 
             style="@style/DatePickerItemStyle"
     />
+    <Space android:layout_width="24dp" android:layout_height="match_parent"/>
 </LinearLayout>

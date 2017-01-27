@@ -4,9 +4,10 @@
         <shape>
             <solid android:color="@color/light_purple" />
             <size android:width="@dimen/layer_list_drawable_width" />
+            <corners android:bottomLeftRadius="@dimen/btn_add_it_corner_radius" android:bottomRightRadius="@dimen/btn_add_it_corner_radius" />
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_down_normal" android:gravity="center">
-
+    <item >
+        <bitmap android:src="@drawable/ic_down_normal" android:gravity="center" />
     </item>
 </layer-list>
