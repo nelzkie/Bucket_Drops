@@ -1,11 +1,15 @@
 package com.example.skadush.bucket_drops.widgets;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.example.skadush.bucket_drops.R;
 
 import java.text.SimpleDateFormat;
@@ -14,11 +18,16 @@ import java.util.Calendar;
 /**
  * Created by skadush on 27/01/17.
  */
-public class BucketPickerView extends LinearLayout {
+public class BucketPickerView extends LinearLayout implements View.OnTouchListener {
 
     TextView mTextDate, mTextMonth, mTextYear;
     Calendar calendar;
     SimpleDateFormat simpleDateFormat;
+
+    public static final int LEFT = 0;
+    public static final int TOP = 1;
+    public static final int RIGHT = 2;
+    public static final int BOTTOM = 3;
 
     public BucketPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,6 +61,11 @@ public class BucketPickerView extends LinearLayout {
         mTextMonth = (TextView) this.findViewById(R.id.tv_month);
         mTextYear = (TextView) this.findViewById(R.id.tv_year);
 
+
+        mTextDate.setOnTouchListener(this);
+        mTextMonth.setOnTouchListener(this);
+        mTextYear.setOnTouchListener(this);
+
         int date = calendar.get(Calendar.DATE);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
@@ -76,4 +90,122 @@ public class BucketPickerView extends LinearLayout {
     public long getTime() {
         return calendar.getTimeInMillis();
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        switch (v.getId()) {
+            case R.id.tv_date:
+                processEcventsFor(mTextDate, event);
+                break;
+            case R.id.tv_month:
+                processEcventsFor(mTextMonth, event);
+                break;
+            case R.id.tv_year:
+                processEcventsFor(mTextYear, event);
+                break;
+        }
+
+
+        return true;
+    }
+
+    void processEcventsFor(TextView textView, MotionEvent event) {
+        Drawable[] drawables = textView.getCompoundDrawables();
+        if (hasDrawableTop(drawables) && hasDrawableBottom(drawables)) {
+            Rect topBounds = drawables[TOP].getBounds();
+            Rect bottomBounds = drawables[BOTTOM].getBounds();
+            float x = event.getX();
+            float y = event.getY();
+            if (topDrawableHit(textView,topBounds.height(),x,y)) {
+
+                if(isActionDown(event)){
+
+                    increment(textView.getId());
+                }
+            } else if (bottomDrawableHit(textView,bottomBounds.height(),x,y)) {
+                if(isActionDown(event)){
+                    decrement(textView.getId());
+                }
+            } else {
+
+            }
+
+
+        }
+    }
+
+    boolean isActionDown(MotionEvent event){
+        return  event.getAction() == MotionEvent.ACTION_DOWN;
+    }
+
+    void increment(int id){
+        switch (id) {
+            case R.id.tv_date:
+                calendar.add(Calendar.DATE,1);
+                break;
+            case R.id.tv_month:
+                calendar.add(Calendar.MONTH,1);
+                break;
+            case R.id.tv_year:
+                calendar.add(Calendar.YEAR,1);
+                break;
+        }
+
+       // set(calendar);
+        UpdateTextViews(calendar);
+    }
+
+    private void UpdateTextViews(Calendar calendar) {
+        int date = calendar.get(Calendar.DATE);
+
+
+        int year = calendar.get(Calendar.YEAR);
+        mTextDate.setText(date + "");
+        mTextYear.setText(year + "");
+       mTextMonth.setText(simpleDateFormat.format(calendar.getTime()));
+    }
+
+    void decrement(int id){
+        switch (id) {
+            case R.id.tv_date:
+                calendar.add(Calendar.DATE,-1);
+                break;
+            case R.id.tv_month:
+                calendar.add(Calendar.MONTH,-1);
+                break;
+            case R.id.tv_year:
+                calendar.add(Calendar.YEAR,-1);
+                break;
+        }
+        UpdateTextViews(calendar);
+
+    }
+
+    private boolean topDrawableHit(TextView textView,int drawableHeight ,float x, float y) {
+        int xmin = textView.getPaddingLeft(); // padding left of the textview
+        int xmax = textView.getWidth() - textView.getPaddingRight();  // width of textview minus padding right of the textview
+        int ymin = textView.getPaddingTop(); // the padding top of the textview
+        int ymax = textView.getPaddingTop() + drawableHeight; // padding top + the drawable height
+
+        return x > xmin && x < xmax && y > ymin && y < ymax;
+    }
+
+    private boolean bottomDrawableHit( TextView textView,int drawableHeight, float x, float y) {
+        int xmin = textView.getPaddingLeft(); // padding left of the textview
+        int xmax = textView.getWidth() - textView.getPaddingRight();  // width of textview minus padding right of the textview
+        int ymax = textView.getHeight() - textView.getPaddingBottom();
+        int ymin = ymax - drawableHeight;
+
+        return x > xmin && x < xmax && y > ymin && y < ymax;
+    }
+
+    boolean hasDrawableTop(Drawable[] drawables) {
+        return drawables[TOP] != null;
+    }
+
+    boolean hasDrawableBottom(Drawable[] drawables) {
+        return drawables[BOTTOM] != null;
+    }
+
 }
