@@ -30,7 +30,7 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
     public static final int TOP = 1;
     public static final int RIGHT = 2;
     public static final int BOTTOM = 3;
-    private int MSG_KEY =1;
+    private int MSG_KEY = 1;
     private long DELAY = 250;
     boolean mIncrement, mDecrement;
     int mActiveTextViewID;
@@ -38,22 +38,21 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
     Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            if(mIncrement){
+            if (mIncrement) {
                 increment(mActiveTextViewID);
             }
 
-            if(mDecrement){
+            if (mDecrement) {
                 decrement(mActiveTextViewID);
             }
 
-            if(mIncrement || mDecrement){
-                mHandler.sendEmptyMessageDelayed(MSG_KEY,DELAY);
+            if (mIncrement || mDecrement) {
+                mHandler.sendEmptyMessageDelayed(MSG_KEY, DELAY);
             }
 
             return true;
         }
     });
-
 
 
     public BucketPickerView(Context context, AttributeSet attrs) {
@@ -145,27 +144,31 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
             float x = event.getX();
             float y = event.getY();
             mActiveTextViewID = textView.getId();
-            if (topDrawableHit(textView,topBounds.height(),x,y)) {
+            if (topDrawableHit(textView, topBounds.height(), x, y)) {
 
-                if(isActionDown(event)){
+                if (isActionDown(event)) {
 
                     mIncrement = true;
                     increment(textView.getId());
                     mHandler.removeMessages(MSG_KEY);
-                    mHandler.sendEmptyMessageDelayed(MSG_KEY,DELAY);
+                    mHandler.sendEmptyMessageDelayed(MSG_KEY, DELAY);
+                    toggleDrawables(textView,true);
                 }
-                if(isActionUpOrCancel(event)){
+                if (isActionUpOrCancel(event)) {
                     mIncrement = false;
+                    toggleDrawables(textView,false);
                 }
-            } else if (bottomDrawableHit(textView,bottomBounds.height(),x,y)) {
-                if(isActionDown(event)){
+            } else if (bottomDrawableHit(textView, bottomBounds.height(), x, y)) {
+                if (isActionDown(event)) {
                     mDecrement = true;
                     decrement(textView.getId());
                     mHandler.removeMessages(MSG_KEY);
-                    mHandler.sendEmptyMessageDelayed(MSG_KEY,DELAY);
+                    mHandler.sendEmptyMessageDelayed(MSG_KEY, DELAY);
+                    toggleDrawables(textView,true);
                 }
-                if(isActionUpOrCancel(event)){
+                if (isActionUpOrCancel(event)) {
                     mDecrement = false;
+                    toggleDrawables(textView,false);
                 }
             } else {
                 mDecrement = false;
@@ -176,27 +179,28 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
         }
     }
 
-    boolean isActionDown(MotionEvent event){
-        return  event.getAction() == MotionEvent.ACTION_DOWN;
-    }
-    boolean isActionUpOrCancel(MotionEvent event){
-        return  event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL ;
+    boolean isActionDown(MotionEvent event) {
+        return event.getAction() == MotionEvent.ACTION_DOWN;
     }
 
-    void increment(int id){
+    boolean isActionUpOrCancel(MotionEvent event) {
+        return event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL;
+    }
+
+    void increment(int id) {
         switch (id) {
             case R.id.tv_date:
-                calendar.add(Calendar.DATE,1);
+                calendar.add(Calendar.DATE, 1);
                 break;
             case R.id.tv_month:
-                calendar.add(Calendar.MONTH,1);
+                calendar.add(Calendar.MONTH, 1);
                 break;
             case R.id.tv_year:
-                calendar.add(Calendar.YEAR,1);
+                calendar.add(Calendar.YEAR, 1);
                 break;
         }
 
-       // set(calendar);
+        // set(calendar);
         UpdateTextViews(calendar);
     }
 
@@ -207,26 +211,26 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
         int year = calendar.get(Calendar.YEAR);
         mTextDate.setText(date + "");
         mTextYear.setText(year + "");
-       mTextMonth.setText(simpleDateFormat.format(calendar.getTime()));
+        mTextMonth.setText(simpleDateFormat.format(calendar.getTime()));
     }
 
-    void decrement(int id){
+    void decrement(int id) {
         switch (id) {
             case R.id.tv_date:
-                calendar.add(Calendar.DATE,-1);
+                calendar.add(Calendar.DATE, -1);
                 break;
             case R.id.tv_month:
-                calendar.add(Calendar.MONTH,-1);
+                calendar.add(Calendar.MONTH, -1);
                 break;
             case R.id.tv_year:
-                calendar.add(Calendar.YEAR,-1);
+                calendar.add(Calendar.YEAR, -1);
                 break;
         }
         UpdateTextViews(calendar);
 
     }
 
-    private boolean topDrawableHit(TextView textView,int drawableHeight ,float x, float y) {
+    private boolean topDrawableHit(TextView textView, int drawableHeight, float x, float y) {
         int xmin = textView.getPaddingLeft(); // padding left of the textview
         int xmax = textView.getWidth() - textView.getPaddingRight();  // width of textview minus padding right of the textview
         int ymin = textView.getPaddingTop(); // the padding top of the textview
@@ -235,7 +239,7 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
         return x > xmin && x < xmax && y > ymin && y < ymax;
     }
 
-    private boolean bottomDrawableHit( TextView textView,int drawableHeight, float x, float y) {
+    private boolean bottomDrawableHit(TextView textView, int drawableHeight, float x, float y) {
         int xmin = textView.getPaddingLeft(); // padding left of the textview
         int xmax = textView.getWidth() - textView.getPaddingRight();  // width of textview minus padding right of the textview
         int ymax = textView.getHeight() - textView.getPaddingBottom();
@@ -250,6 +254,21 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
 
     boolean hasDrawableBottom(Drawable[] drawables) {
         return drawables[BOTTOM] != null;
+    }
+
+    void toggleDrawables(TextView textView, boolean isPressed) {
+        if (isPressed) {
+
+            if (mIncrement) {
+                textView.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.up_pressed,0,R.drawable.bottom_normal);
+            }
+            if (mDecrement) {
+                textView.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.up_normal,0,R.drawable.bottom_pressed);
+            }
+
+        } else {
+            textView.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.up_normal,0,R.drawable.bottom_normal);
+        }
     }
 
 }
