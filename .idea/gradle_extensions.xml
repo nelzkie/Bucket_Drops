@@ -95,6 +95,7 @@
             <task name="transformNative_libsWithMergeJniLibsForDebug" type="com.android.build.gradle.internal.pipeline.TransformTask">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="packageRelease" type="com.android.build.gradle.tasks.PackageApplication">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="validateSigningDebug" type="com.android.build.gradle.internal.tasks.ValidateSigningTask">&lt;i&gt;Task group: other&lt;i&gt;</task>
+            <task name="prepareComGithubHalysongoncalvesPugnotification181Library" type="com.android.build.gradle.internal.tasks.PrepareLibraryTask">Prepare com.github.halysongoncalves:pugnotification:1.8.1&lt;p&gt;&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="compileDebugAidl" type="com.android.build.gradle.tasks.AidlCompile">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="mergeDebugResources" type="com.android.build.gradle.tasks.MergeResources">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="wrapper" type="org.gradle.api.tasks.wrapper.Wrapper">Generates Gradle wrapper files. [incubating]&lt;p&gt;&lt;i&gt;Task group: Build Setup&lt;i&gt;</task>
@@ -279,6 +280,7 @@
             <task name="transformNative_libsWithMergeJniLibsForDebug" type="com.android.build.gradle.internal.pipeline.TransformTask">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="packageRelease" type="com.android.build.gradle.tasks.PackageApplication">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="validateSigningDebug" type="com.android.build.gradle.internal.tasks.ValidateSigningTask">&lt;i&gt;Task group: other&lt;i&gt;</task>
+            <task name="prepareComGithubHalysongoncalvesPugnotification181Library" type="com.android.build.gradle.internal.tasks.PrepareLibraryTask">Prepare com.github.halysongoncalves:pugnotification:1.8.1&lt;p&gt;&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="compileDebugAidl" type="com.android.build.gradle.tasks.AidlCompile">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="mergeDebugResources" type="com.android.build.gradle.tasks.MergeResources">&lt;i&gt;Task group: other&lt;i&gt;</task>
             <task name="preDebugUnitTestBuild">&lt;i&gt;Task group: other&lt;i&gt;</task>

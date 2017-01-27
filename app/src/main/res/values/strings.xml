@@ -5,4 +5,7 @@
     <string name="add_it">Add It</string>
     <string name="no_item">No Item to display</string>
     <string name="sans_serif_thin">sans-serif-thin</string>
+    <string name="notif_title">Congratulations</string>
+    <string name="notif_message">You are nearing your goal</string>
+    <string name="notif_long_message">You are getting closer to your goal that you were before. Keep moving and dont give up!</string>
 </resources>
