@@ -3,8 +3,10 @@ package com.example.skadush.bucket_drops.widgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -134,6 +136,29 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
 
 
         return true;
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("super",super.onSaveInstanceState());
+        bundle.putInt("date",calendar.get(Calendar.DATE));
+        bundle.putInt("month",calendar.get(Calendar.MONTH));
+        bundle.putInt("year",calendar.get(Calendar.YEAR));
+        return  bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if(state instanceof  Parcelable){
+            Bundle bundle = (Bundle) state;
+            state = bundle.getParcelable("super");
+            int date = bundle.getInt("date");
+            int month = bundle.getInt("month");
+            int year = bundle.getInt("year");
+            update(date,month,year,0,0,0);
+        }
+        super.onRestoreInstanceState(state);
     }
 
     void processEcventsFor(TextView textView, MotionEvent event) {
